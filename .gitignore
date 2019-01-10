@@ -1,0 +1,9 @@
+node_modules/**/*
+.expo/*
+npm-debug.*
+*.jks
+*.p12
+*.key
+*.mobileprovision
+data/img/*
+data/cardDB.json
