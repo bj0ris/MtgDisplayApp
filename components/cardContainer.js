@@ -1,21 +1,56 @@
 import React from 'react';
-import { StyleSheet, Text, View,ScrollView } from 'react-native';
+import { StyleSheet, Text, View,ScrollView,TouchableHighlight } from 'react-native';
 import {Card} from './card.js';
-import CardData from '../data/cardDB.json'
-//TODO
-var tester = [];
+import {BigCard} from './bigCard.js';
+import CardData from '../assets/cardDB.json'
+
+
+var cardArray = [];
 for(var card in CardData){
-    tester.push(CardData[card]);
+    //TEMPFIX
+    pushData = CardData[card];
+    pushData["arenaId"] = String(card);
+
+    cardArray.push(pushData);
 }
 export class CardContainer extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            activeCardName: null,
+            activeCardPath : null,
+            cardActive: false
+        }
+        this.handleTouch = this.handleTouch.bind(this);
+    }
+
+
+    handleTouch(cardName,cardPath) {
+        const newBoolState = this.state.cardActive == true ? false : true;
+        this.setState({
+            activeCardName: cardName,
+            activeCardPath : cardPath,
+            cardActive: newBoolState
+        });
+    }
+
     render() {
-        return (
-            <ScrollView>
-                <View style={styles.cards}>
-                    {tester.map(data =><Card text={data["name"]} lrgImg={data["lrg_img_link"]} smlImg={data["sml_img_link"]} key={data["name"]} />)}
-                </View>
-            </ScrollView>
-        );
+        if(this.state.cardActive){
+            return(
+                    <BigCard press={this.handleTouch} reqpath={this.state.activeCardPath}/>
+                )
+        }
+        else{
+            return (
+                <ScrollView>
+                    <View style={styles.cards}>
+                        {cardArray.map(data =>
+                                <Card reqpath={data["arenaId"]} text={data["name"]} press={this.handleTouch} lrgImg={data["lrg_img_link"]} smlImg={data["sml_img_link"]} key={data["sml_img_link"]} />
+                        )}
+                    </View>
+                </ScrollView>
+            );
+        }
     }
 }
 
