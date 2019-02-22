@@ -10,7 +10,7 @@ export default class App extends React.Component {
                 <View style={styles.filter}>
                     <Text>Filter + options går her</Text>
                 </View>
-                <CardContainer tyle={{flex:1}} />
+                <CardContainer style={{flex:1}} />
             </View>
         );
     }

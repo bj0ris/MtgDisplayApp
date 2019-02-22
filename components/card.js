@@ -10,13 +10,21 @@ export class Card extends React.Component {
         super(props);
         this.cardPressed = this.cardPressed.bind(this);
     }
+    componentDidUpdate(){
+        console.log("card     Update");
+    }
+    shouldComponentUpdate (){
+        return false
+    }
 
     cardPressed(){
-        this.props.press(this.props.text,this.props.reqpath);
+        this.props.press( this.props.reqpath, this.props.index);
+        console.log("Small card pressed");
     }
 
     render() {
         // test = Images.s.s68286;
+        //console.log(this.props.index);
         var path = Images.s[this.props.reqpath];
             return (
                 <TouchableHighlight onPress={this.cardPressed}>

@@ -13,56 +13,93 @@ for(var card in CardData){
 
     cardArray.push(pushData);
 }
+////sssdfghj
 export class CardContainer extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            activeCardName: null,
             activeCardPath : null,
-            cardActive: false
+            cardActive: false,
+            cardIndex: null,
         }
         this.handleTouch = this.handleTouch.bind(this);
+        this.handleRight = this.handleRight.bind(this);
+        this.handleLeft = this.handleLeft.bind(this);
     }
+    componentDidUpdate(){
+        console.log("containerUpdate");
 
-
-    handleTouch(cardName,cardPath) {
-        const newBoolState = this.state.cardActive == true ? false : true;
+    }
+    shouldComponentUpdate (){
+        return true;
+    }
+    handleRight(index){
+        console.log(index);
+        var path = cardArray[index+1]["arenaId"];
+        var newIndex = index+1;
         this.setState({
-            activeCardName: cardName,
-            activeCardPath : cardPath,
-            cardActive: newBoolState
+            activeCardPath : path,
+            cardIndex : newIndex,
+        });
+    }
+    handleLeft(index){
+        console.log(index);
+        var path = cardArray[index-1]["arenaId"];
+        var newIndex = index-1;
+        this.setState({
+            activeCardPath : path,
+            cardIndex : newIndex,
         });
     }
 
+    handleTouch(cardPath,cardIndex) {
+        const newBoolState = this.state.cardActive == true ? false : true;
+        this.setState({
+            activeCardPath : cardPath,
+            cardActive: newBoolState,
+            cardIndex : cardIndex,
+        });
+    }
+
+    createCards(){
+        var that = this
+        var cardJSXArray = cardArray.map(function(data,index) {
+                return <Card index={index} reqpath={data["arenaId"]} text={data["name"]} press={that.handleTouch} lrgImg={data["lrg_img_link"]} smlImg={data["sml_img_link"]} key={data["sml_img_link"]} />
+        });
+
+        return cardJSXArray;
+    }
+
     render() {
-        if(this.state.cardActive){
-            return(
-                    <BigCard press={this.handleTouch} reqpath={this.state.activeCardPath}/>
-                )
-        }
-        else{
             return (
-                <ScrollView>
-                    <View style={styles.cards}>
-                        {cardArray.map(data =>
-                                <Card reqpath={data["arenaId"]} text={data["name"]} press={this.handleTouch} lrgImg={data["lrg_img_link"]} smlImg={data["sml_img_link"]} key={data["sml_img_link"]} />
-                        )}
-                    </View>
-                </ScrollView>
+                <View style={styles.outerView}>
+                    <ScrollView scrollEnabled={this.state.cardActive ? false : true}>
+                        <View style={styles.cardContainer}>
+                            {this.createCards()}
+                        </View>
+                    </ScrollView>
+                    {this.state.cardActive ? (
+                        <BigCard pressRight={this.handleRight} pressLeft={this.handleLeft} pressDown={this.handleTouch} reqpath={this.state.activeCardPath} index={this.state.cardIndex}/>
+                    ) : (
+                        <View style={{display:'none'}}></View>
+                    )}
+                </View>
             );
         }
-    }
+
 }
 
 const styles = StyleSheet.create({
-    cards: {
+    outerView : {
+        flex:1,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+    },
+    cardContainer: {
         flex: 1,
         alignSelf: 'stretch',
         flexWrap:'wrap',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        borderWidth: 2,
-        borderColor: '#000',
     },
-
 });
