@@ -1,16 +1,76 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {CardContainer} from './components/cardContainer.js';
+import {Header} from './components/header.js';
+import CardData from './assets/cardDB.json'
 
-
+//'W','U','B','R','G','N'
 export default class App extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            activeCardColors : ['W','U','B','R','G','N'],
+        }
+        this.generateCardArray = this.generateCardArray.bind(this);
+        this.filterPressed = this.filterPressed.bind(this);
+    }
+
+    generateCardArray(){
+        var cardArray = [];
+        var stateCards = this.state.activeCardColors;
+        for(var card in CardData){
+            var colorArray = CardData[card]['colors'];;
+            if(colorArray[0] == undefined){
+                colorArray = ['N'];
+            }
+
+            var containsBool = false;
+            for(var i=0; i<colorArray.length;i++){
+                if(stateCards.includes(colorArray[i])){
+                    containsBool=true;
+                    break;
+                }
+            }
+
+            if(containsBool) {
+                var pushData = CardData[card];
+                pushData["arenaId"] = String(card);
+                cardArray.push(pushData);
+            }
+
+        }
+        return cardArray
+    }
+    //'W','U','B','R','G','N' or 'allOff'
+    filterPressed(colorString){
+        if(colorString== 'allOff'){
+            this.setState({
+                activeCardColors:[]
+            });
+        }
+        else{
+            var oldColorArray = this.state.activeCardColors;
+            if(oldColorArray.includes(colorString)){
+                var index = oldColorArray.indexOf(colorString);
+                oldColorArray.splice(index, 1);
+                this.setState({
+                    activeCardColors:oldColorArray
+                });
+            }
+            else{
+                oldColorArray.push(colorString);
+                this.setState({
+                    activeCardColors:oldColorArray
+                });
+            }
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <View style={styles.filter}>
-                    <Text>Filter + options går her</Text>
-                </View>
-                <CardContainer style={{flex:1}} />
+                <Header filterPress={this.filterPressed} />
+                <CardContainer style={{flex:1}} cardArray={this.generateCardArray()}/>
             </View>
         );
     }

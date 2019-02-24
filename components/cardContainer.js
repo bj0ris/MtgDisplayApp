@@ -2,25 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View,ScrollView,TouchableHighlight } from 'react-native';
 import {Card} from './card.js';
 import {BigCard} from './bigCard.js';
-import CardData from '../assets/cardDB.json'
 
 
-var cardArray = [];
-for(var card in CardData){
-    //TEMPFIX
-    pushData = CardData[card];
-    pushData["arenaId"] = String(card);
 
-    cardArray.push(pushData);
-}
-////sssdfghj
+////dsafdsgdsgdfh
 export class CardContainer extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             activeCardPath : null,
             cardActive: false,
-            cardIndex: null,
+            activeCardIndex: null,
         }
         this.handleTouch = this.handleTouch.bind(this);
         this.handleRight = this.handleRight.bind(this);
@@ -35,20 +27,20 @@ export class CardContainer extends React.Component {
     }
     handleRight(index){
         console.log(index);
-        var path = cardArray[index+1]["arenaId"];
+        var path = this.props.cardArray[index+1]["arenaId"];
         var newIndex = index+1;
         this.setState({
             activeCardPath : path,
-            cardIndex : newIndex,
+            activeCardIndex : newIndex,
         });
     }
     handleLeft(index){
         console.log(index);
-        var path = cardArray[index-1]["arenaId"];
+        var path = this.props.cardArray[index-1]["arenaId"];
         var newIndex = index-1;
         this.setState({
             activeCardPath : path,
-            cardIndex : newIndex,
+            activeCardIndex : newIndex,
         });
     }
 
@@ -57,20 +49,29 @@ export class CardContainer extends React.Component {
         this.setState({
             activeCardPath : cardPath,
             cardActive: newBoolState,
-            cardIndex : cardIndex,
+            activeCardIndex : cardIndex,
         });
     }
-
+    //fjdkslafjfkdsla
     createCards(){
-        var that = this
-        var cardJSXArray = cardArray.map(function(data,index) {
-                return <Card index={index} reqpath={data["arenaId"]} text={data["name"]} press={that.handleTouch} lrgImg={data["lrg_img_link"]} smlImg={data["sml_img_link"]} key={data["sml_img_link"]} />
+        var that = this;
+        var cardJSXArray = this.props.cardArray.map(function(data,index) {
+                return <Card
+                            activeCardIndex ={that.state.activeCardIndex}
+                            index={index}
+                            reqpath={data["arenaId"]}
+                            text={data["name"]}
+                            press={that.handleTouch}
+                            lrgImg={data["lrg_img_link"]}
+                            smlImg={data["sml_img_link"]}
+                            key={data["sml_img_link"]} />
         });
 
         return cardJSXArray;
     }
 
     render() {
+        console.log("test");
             return (
                 <View style={styles.outerView}>
                     <ScrollView scrollEnabled={this.state.cardActive ? false : true}>
@@ -79,7 +80,13 @@ export class CardContainer extends React.Component {
                         </View>
                     </ScrollView>
                     {this.state.cardActive ? (
-                        <BigCard pressRight={this.handleRight} pressLeft={this.handleLeft} pressDown={this.handleTouch} reqpath={this.state.activeCardPath} index={this.state.cardIndex}/>
+                        <BigCard
+                            pressRight={this.handleRight}
+                            pressLeft={this.handleLeft}
+                            pressDown={this.handleTouch}
+                            reqpath={this.state.activeCardPath}
+                            index={this.state.activeCardIndex}
+                        />
                     ) : (
                         <View style={{display:'none'}}></View>
                     )}
@@ -93,7 +100,9 @@ const styles = StyleSheet.create({
     outerView : {
         flex:1,
         alignItems: 'center',
-        justifyContent: 'space-around',
+
+        justifyContent: 'center',
+        backgroundColor: 'grey',
     },
     cardContainer: {
         flex: 1,

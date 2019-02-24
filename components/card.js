@@ -13,26 +13,40 @@ export class Card extends React.Component {
     componentDidUpdate(){
         console.log("card     Update");
     }
-    shouldComponentUpdate (){
+
+    shouldComponentUpdate (nextProps, nextState){
+        if((nextProps.activeCardIndex == this.props.index)||(Math.abs(nextProps.activeCardIndex-this.props.index)==1) )  {
+            return true;
+        }
         return false
     }
 
     cardPressed(){
         this.props.press( this.props.reqpath, this.props.index);
-        console.log("Small card pressed");
     }
 
     render() {
         // test = Images.s.s68286;
         //console.log(this.props.index);
         var path = Images.s[this.props.reqpath];
-            return (
-                <TouchableHighlight onPress={this.cardPressed}>
-                    <View style={styles.card} >
-                        <Image source={path}  style={styles.image} />
-                    </View>
-                </TouchableHighlight>
-            );
+            if(this.props.index === this.props.activeCardIndex){
+                return (
+                    <TouchableHighlight onPress={this.cardPressed}>
+                        <View style={styles.cardActive} >
+                            <Image source={path}  style={styles.image} />
+                        </View>
+                    </TouchableHighlight>
+                );
+            }
+            else{
+                return (
+                    <TouchableHighlight onPress={this.cardPressed}>
+                        <View style={styles.card} >
+                            <Image source={path}  style={styles.image} />
+                        </View>
+                    </TouchableHighlight>
+                );
+            }
         }
 
 }
@@ -49,11 +63,20 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#000',
     },
+    cardActive: {
+        width: 73,
+        height:102,
+        margin: 15,
+        marginTop:0,
+        borderWidth: 2,
+        borderColor: '#f1802d',
+    },
     image: {
         position: 'absolute',
         top: -51,
         width:73,
         resizeMode: 'contain',
+        borderRadius: 4,
     },
 
 });
