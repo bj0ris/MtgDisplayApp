@@ -1,36 +1,41 @@
 import React from 'react';
 import { StyleSheet, View, Image, TouchableHighlight, Animated , PanResponder,Dimensions,Easing } from 'react-native';
 import Images from '../assets/imgIndex.js';
+import {QuantityTracker} from './quantityTracker.js';
 
 
-var {height, width} = Dimensions.get('window');
-var cardWidth = width*0.8;
+const {screenHeight, screenWidth} = Dimensions.get('window');
+var cardWidth = screenWidth*0.5;
+//const screenWidth = Dimensions.get('window').width;
 
 export class BigCard extends React.Component {
     constructor(props) {
         super(props);
         this.cardPressed = this.cardPressed.bind(this);
         const position = new Animated.ValueXY();
+        const positionMiddle = new Animated.ValueXY();
         const scale = new Animated.Value(1);
         const panResponder = PanResponder.create({
                 onStartShouldSetPanResponder: () => true,
                 onPanResponderMove: (event, gesture) => {
                     position.setValue({ x: gesture.dx, y: gesture.dy });
+                    positionMiddle.setValue({x: gesture.dx, y: gesture.dy});
                 },
                 onPanResponderRelease: (event, gesture) => {
 
                     //Prev Card
-                    if(gesture.dx>50 && Math.abs(gesture.dy)<100){
+                    if(gesture.dx>50 && Math.abs(gesture.dy)<200){
+                        /*
                         Animated.sequence([
                             Animated.timing(this.state.position, {
                                 toValue: {x: 400, y: 0},
                                 easing: Easing.elastic(),
-                                duration: 100,
+                                duration: 200,
                             }),
                             Animated.timing(position, {
                                 toValue: {x: -400, y: 0},
                                 easing: Easing.elastic(),
-                                duration: 100,
+                                duration: 0,
                             }),
                             Animated.timing(this.state.position.x, {
                                 toValue: 0,
@@ -39,29 +44,78 @@ export class BigCard extends React.Component {
                             }),
                         ]).start();
                         setTimeout(() => {this.props.pressLeft(this.props.index)}, 100);
+                        this.props.pressLeft(this.props.index);
+                        position.setValue({ x: 0, y: 0 });
+                        */
+                        var screenWidth = Dimensions.get('window').width;
+
+                        console.log(screenWidth);
+                        Animated.parallel([
+                            Animated.timing(this.state.position, {
+                                toValue: {x: ((screenWidth/2)+(0.12*screenWidth)), y: 0},
+                                easing: Easing.elastic(),
+                                duration: 600,
+                            }),
+                            Animated.timing(this.state.positionMiddle, {
+                                toValue: {x: ((2*screenWidth)), y: 0},
+                                easing: Easing.linear,
+                                duration: 600,
+                            }),
+
+                        ]).start();
+
+                        setTimeout(() => {
+                            this.props.pressLeft(this.props.index);
+                            position.setValue({ x: 0, y: 0 });
+                            positionMiddle.setValue({x: 0, y: 0});
+                        }, 600);
+
                     }
 
                     //Next Card
-                    else if (gesture.dx<-50 && Math.abs(gesture.dy)<100) {
-                        Animated.sequence([
+                    else if (gesture.dx<-50 && Math.abs(gesture.dy)<200) {
+
+                        /*
+                        this.props.pressRight(this.props.index);
+                        position.setValue({ x: (screenWidth/2), y: 0 });
+                        */
+                        var screenWidth = Dimensions.get('window').width;
+
+                        console.log(screenWidth);
+                        Animated.parallel([
                             Animated.timing(this.state.position, {
-                                toValue: {x: -400, y: 0},
+                                toValue: {x: ((-screenWidth/2)-(0.12*screenWidth)), y: 0},
                                 easing: Easing.elastic(),
-                                duration: 100,
+                                duration: 600,
                             }),
-                            Animated.timing(position, {
-                                toValue: {x: 400, y: 0},
-                                easing: Easing.elastic(),
-                                duration: 100,
+                            Animated.timing(this.state.positionMiddle, {
+                                toValue: {x: ((-2*screenWidth)), y: 0},
+                                easing: Easing.linear,
+                                duration: 600,
                             }),
-                            Animated.timing(this.state.position.x, {
-                                toValue: 0,
-                                easing: Easing.back(),
-                                duration: 300,
-                            }),
+
                         ]).start();
-                        setTimeout(() => {this.props.pressRight(this.props.index)}, 100);
+
+                        setTimeout(() => {
+                            this.props.pressRight(this.props.index);
+                            position.setValue({ x: 0, y: 0 });
+                            positionMiddle.setValue({x: 0, y: 0});
+                        }, 600);
                     }
+                    /*
+
+                    Animated.timing(position, {
+                        toValue: {x: 400, y: 0},
+                        easing: Easing.elastic(),
+                        duration: 0,
+                    }),
+                    Animated.timing(this.state.position.x, {
+                        toValue: 0,
+                        easing: Easing.back(),
+                        duration: 300,
+                    }),
+
+                    */
 
                     //Close card
                     else if (gesture.dy>100) {
@@ -72,10 +126,20 @@ export class BigCard extends React.Component {
                                 easing: Easing.linear,
                             }),
                             Animated.timing(position,{
-                                toValue: {x:0, y:height}
+                                toValue: {x:0, y:screenHeight}
                             })
                         ]).start();
-                        setTimeout(() => {this.props.pressDown(null,null)}, 300);
+                        setTimeout(() => {this.props.pressDown(null,this.props.index)}, 300);
+                    }
+
+                    //Add card
+                    else if(gesture.dy<-100){
+                        Animated.timing(position,{
+                            toValue: {x:0, y:0},
+                            duration: 300,
+                            easing: Easing.linear,
+                        }).start();
+                        this.props.addCard(this.props.index)
                     }
 
                     //No position registrered
@@ -88,7 +152,7 @@ export class BigCard extends React.Component {
 
 
         this.state = {
-            panResponder, position, scale,
+            panResponder, position, positionMiddle, scale,
         };
     }
 
@@ -99,22 +163,48 @@ export class BigCard extends React.Component {
     }
 
     render() {
-        var path = Images.l[this.props.reqpath];
-        /*console.log(typeof this.props.reqpath);dsadsa
-        //console.log(this.props.reqpath);dsadsasdadsadsaads
-        //console.log(path);style={styles.image}
-        <TouchableHighlight onPress={this.cardPressed} style={styles.imageContainer}>
-        </TouchableHighlight>
-        */
+        var pathLeft = Images.l[this.props.prevId];
+        var pathMiddle = Images.l[this.props.arenaId];
+        var pathRight = Images.l[this.props.nextId];
+
+        var screenWidth = Dimensions.get('window').width;
+
+        const leftCardPos = this.state.position.x.interpolate({
+            inputRange:[0,screenWidth],
+            outputRange:[0,2*screenWidth],
+        });
+        const middleCardPos = this.state.position.x.interpolate({
+            inputRange:[0,300],
+            outputRange:[0,300],
+        });
+        const rightCardPos = this.state.position.x.interpolate({
+            inputRange:[0,screenWidth],
+            outputRange:[0,2*screenWidth],
+        });
+        //this.state.positionMiddle.getLayout(),
+        console.log(this.state.position.x);
         return (
 
                 <Animated.View
-                    style={[styles.imageContainer,this.state.position.getLayout(),
+                    style={[styles.outerAnimated,
                         {transform: [{scale: this.state.scale},{perspective: 1000},],}
                     ]}
                     {...this.state.panResponder.panHandlers}
                     >
-                    <Image source={path}  style={styles.image}/>
+                    <View style={{flexDirection:'row',flex:1,justifyContent: 'space-evenly'}} >
+                        <Animated.View style={[styles.imageContainer,{left:rightCardPos}]}>
+                            <QuantityTracker quantity={this.props.quantity} />
+                            <Image source={pathLeft} style={styles.image}/>
+                        </Animated.View>
+                        <Animated.View style={[styles.imageContainer,{zIndex:-1},this.state.positionMiddle.getLayout()]}>
+                            <QuantityTracker quantity={this.props.quantity} />
+                            <Image source={pathMiddle}  style={styles.image}/>
+                        </Animated.View>
+                        <Animated.View style={[styles.imageContainer,{left:rightCardPos}]}>
+                            <QuantityTracker quantity={this.props.quantity} />
+                            <Image source={pathRight} style={styles.image}/>
+                        </Animated.View>
+                    </View>
                 </Animated.View>
 
         );
@@ -126,24 +216,38 @@ export class BigCard extends React.Component {
 
 const styles = StyleSheet.create({
     image: {
-        width:'100%',
-        position: 'relative',
-        resizeMode: 'contain',
+
+        resizeMode: 'cover',
+        transform: [
+          { scale: 0.6 },
+        ],
         borderRadius: 20,
+        borderWidth:2,
+        borderColor:'yellow',
     },
     imageContainer: {
-        width:cardWidth,
+        width:'30%',
+        alignItems:'center',
+        justifyContent: 'center',
+
+        position:'relative',
+        borderWidth:2,
+        borderColor:'green',
+    },
+    outerAnimated :{
+        width:'300%',
+        height:'70%',
         position:'absolute',
-        marginLeft:'10%',
+        marginTop:200,
+        marginLeft:'-140%',
+
+
 
         borderWidth:2,
         borderColor:'black',
 
-        flex:1,
-        alignItems:'flex-start',
-        justifyContent: 'space-between',
-    },
-
+        flexDirection:'row',
+    }
 });
 
 

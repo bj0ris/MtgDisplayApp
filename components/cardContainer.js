@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View,ScrollView,TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View,ScrollView,TouchableHighlight ,ImageBackground  } from 'react-native';
 import {Card} from './card.js';
 import {BigCard} from './bigCard.js';
 
@@ -10,7 +10,7 @@ export class CardContainer extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            activeCardPath : null,
+            activeCardId : null,
             cardActive: false,
             activeCardIndex: null,
         }
@@ -30,7 +30,7 @@ export class CardContainer extends React.Component {
         var path = this.props.cardArray[index+1]["arenaId"];
         var newIndex = index+1;
         this.setState({
-            activeCardPath : path,
+            activeCardId : path,
             activeCardIndex : newIndex,
         });
     }
@@ -39,7 +39,7 @@ export class CardContainer extends React.Component {
         var path = this.props.cardArray[index-1]["arenaId"];
         var newIndex = index-1;
         this.setState({
-            activeCardPath : path,
+            activeCardId : path,
             activeCardIndex : newIndex,
         });
     }
@@ -47,19 +47,21 @@ export class CardContainer extends React.Component {
     handleTouch(cardPath,cardIndex) {
         const newBoolState = this.state.cardActive == true ? false : true;
         this.setState({
-            activeCardPath : cardPath,
+            activeCardId : cardPath,
             cardActive: newBoolState,
             activeCardIndex : cardIndex,
         });
     }
+
     //fjdkslafjfkdsla
     createCards(){
         var that = this;
         var cardJSXArray = this.props.cardArray.map(function(data,index) {
                 return <Card
+                            quantity = {data["quantity"]}
                             activeCardIndex ={that.state.activeCardIndex}
                             index={index}
-                            reqpath={data["arenaId"]}
+                            arenaId={data["arenaId"]}
                             text={data["name"]}
                             press={that.handleTouch}
                             lrgImg={data["lrg_img_link"]}
@@ -69,23 +71,30 @@ export class CardContainer extends React.Component {
 
         return cardJSXArray;
     }
-
+    //divImg/texture1.jpg
     render() {
         console.log("test");
             return (
                 <View style={styles.outerView}>
-                    <ScrollView scrollEnabled={this.state.cardActive ? false : true}>
-                        <View style={styles.cardContainer}>
-                            {this.createCards()}
-                        </View>
-                    </ScrollView>
+                    <ImageBackground source={require('../assets/divImg/texture1.jpg')} style={{width:'100%',height:'100%'}} >
+                        <ScrollView scrollEnabled={this.state.cardActive ? false : true}>
+                                <View style={styles.cardContainer}>
+                                    {this.createCards()}
+                                </View>
+                        </ScrollView>
+                    </ImageBackground>
                     {this.state.cardActive ? (
                         <BigCard
+                            prevId = {this.props.cardArray[this.state.activeCardIndex-1]["arenaId"]}
+                            nextId = {this.props.cardArray[this.state.activeCardIndex+1]["arenaId"]}
+
+                            quantity={this.props.cardArray[this.state.activeCardIndex]["quantity"]}
                             pressRight={this.handleRight}
                             pressLeft={this.handleLeft}
                             pressDown={this.handleTouch}
-                            reqpath={this.state.activeCardPath}
+                            arenaId={this.state.activeCardId}
                             index={this.state.activeCardIndex}
+                            addCard ={this.props.addCard}
                         />
                     ) : (
                         <View style={{display:'none'}}></View>
@@ -99,10 +108,10 @@ export class CardContainer extends React.Component {
 const styles = StyleSheet.create({
     outerView : {
         flex:1,
+        height:10000,
         alignItems: 'center',
 
         justifyContent: 'center',
-        backgroundColor: 'grey',
     },
     cardContainer: {
         flex: 1,
@@ -110,5 +119,8 @@ const styles = StyleSheet.create({
         flexWrap:'wrap',
         flexDirection: 'row',
         justifyContent: 'space-around',
+
+        top:100,
+        marginBottom:100,
     },
 });

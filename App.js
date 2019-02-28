@@ -10,9 +10,11 @@ export default class App extends React.Component {
         super(props);
         this.state = {
             activeCardColors : ['W','U','B','R','G','N'],
+            deckBuild : {}
         }
         this.generateCardArray = this.generateCardArray.bind(this);
         this.filterPressed = this.filterPressed.bind(this);
+        this.addCard = this.addCard.bind(this);
     }
 
     generateCardArray(){
@@ -65,12 +67,36 @@ export default class App extends React.Component {
             }
         }
     }
+    /*"arenaId": "66079",
+[15:00:32]   "colors": Array [
+[15:00:32]     "U",
+[15:00:32]   ],
+[15:00:32]   "converted_mana_cost": 4,
+[15:00:32]   "dateAdded": "2019-01-10",
+[15:00:32]   "lrg_img_link": "img/66079l.jpg",
+[15:00:32]   "mana_cost": "{3}{U}",
+[15:00:32]   "name": "Herald of Secret Streams",
+[15:00:32]   "power": "2",
+[15:00:32]   "quantity": 1,
+[15:00:32]   "rarity": "rare",
+[15:00:32]   "sml_img_link": "img/66079s.jpg",
+[15:00:32]   "toughness": "3",
+[15:00:32]   "type": "Creature — Merfolk Warrior"
+    */
+
+    addCard(cardIndex){
+        var currentDeckBuild = this.state.deckBuild;
+        var currentCardArray = this.generateCardArray();
+        var cardObjectToAdd = currentCardArray[cardIndex];
+
+        console.log(cardObjectToAdd);
+    }
 
     render() {
         return (
             <View style={styles.container}>
                 <Header filterPress={this.filterPressed} />
-                <CardContainer style={{flex:1}} cardArray={this.generateCardArray()}/>
+                <CardContainer style={{flex:1}} cardArray={this.generateCardArray()} addCard={this.addCard}/>
             </View>
         );
     }

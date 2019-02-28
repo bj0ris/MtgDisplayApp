@@ -27,6 +27,7 @@ export class FilterBox extends React.Component {
 const styles = StyleSheet.create({
 
     filterContainer:{
+        flex:1,
         flexDirection:'column',
         alignItems:'center',
         justifyContent: 'space-around',
@@ -38,9 +39,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     smallFilterContainer: {
+        flex:2,
+        width:'100%',
         flexDirection:'row',
         alignItems:'center',
-        justifyContent: 'space-around',
-        borderColor: 'black',
+        justifyContent: 'space-evenly',
     }
 });
