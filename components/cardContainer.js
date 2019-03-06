@@ -17,31 +17,55 @@ export class CardContainer extends React.Component {
         this.handleTouch = this.handleTouch.bind(this);
         this.handleRight = this.handleRight.bind(this);
         this.handleLeft = this.handleLeft.bind(this);
+        this.handleUp = this.handleUp.bind(this);
+        this.handleDown = this.handleDown.bind(this);
+        this.findDeckQuantity = this.findDeckQuantity.bind(this);
     }
     componentDidUpdate(){
         console.log("containerUpdate");
 
     }
-    shouldComponentUpdate (){
+    shouldComponentUpdate (nextProps,nextState){
+
         return true;
     }
+    componentWillReceiveProps (nextProps){
+        //If We change cardArrray (e.x from library to deck)
+        if(nextProps.cardArray.length != this.props.cardArray.length)
+        this.setState({
+            activeCardId : null,
+            cardActive: false,
+            activeCardIndex: null,
+
+        });
+    }
+
     handleRight(index){
-        console.log(index);
-        var path = this.props.cardArray[index+1]["arenaId"];
-        var newIndex = index+1;
+        var nextIndex = this.findNextIndex(index)
+        var path = this.props.cardArray[nextIndex]["arenaId"];
+        var newIndex = nextIndex;
         this.setState({
             activeCardId : path,
             activeCardIndex : newIndex,
         });
     }
     handleLeft(index){
-        console.log(index);
-        var path = this.props.cardArray[index-1]["arenaId"];
-        var newIndex = index-1;
+        var prevIndex = this.findPrevIndex(index);
+        var path = this.props.cardArray[prevIndex]["arenaId"];
+        var newIndex = prevIndex;
         this.setState({
             activeCardId : path,
             activeCardIndex : newIndex,
         });
+        this.findNextIndex = this.findNextIndex.bind(this);
+        this.findPrevIndex = this.findPrevIndex.bind(this);
+    }
+
+    handleUp(index){
+        this.props.addCard(index);
+    }
+    handleDown(index){
+        this.handleTouch(null,index);
     }
 
     handleTouch(cardPath,cardIndex) {
@@ -53,27 +77,59 @@ export class CardContainer extends React.Component {
         });
     }
 
+
+    findDeckQuantity(index){
+        
+        var arenaId = this.props.cardArray[index]['arenaId'];
+        if(this.props.deckBuild[arenaId] == undefined){
+            return 0
+        }
+        else{
+            return this.props.deckBuild[arenaId]
+        }
+    }
+    findNextIndex(index){
+        if(this.state.activeCardIndex==this.props.cardArray.length-1){
+            return 0;
+        }
+        else{
+            return index+1;
+        }
+    }
+    findPrevIndex(index){
+        if(this.state.activeCardIndex == 0){
+            return this.props.cardArray.length-1;
+        }
+        else{
+            return index-1;
+        }
+    }
+
     //fjdkslafjfkdsla
     createCards(){
         var that = this;
         var cardJSXArray = this.props.cardArray.map(function(data,index) {
+
                 return <Card
+                            deckQuant = {that.findDeckQuantity(index)}
+
                             quantity = {data["quantity"]}
                             activeCardIndex ={that.state.activeCardIndex}
                             index={index}
                             arenaId={data["arenaId"]}
                             text={data["name"]}
                             press={that.handleTouch}
-                            lrgImg={data["lrg_img_link"]}
-                            smlImg={data["sml_img_link"]}
-                            key={data["sml_img_link"]} />
+                            key={data["arenaId"]} />
         });
 
         return cardJSXArray;
     }
     //divImg/texture1.jpg
     render() {
-        console.log("test");
+        var nextIndex = this.findNextIndex(this.state.activeCardIndex);
+        var prevIndex = this.findPrevIndex(this.state.activeCardIndex);
+
+
             return (
                 <View style={styles.outerView}>
                     <ImageBackground source={require('../assets/divImg/texture1.jpg')} style={{width:'100%',height:'100%'}} >
@@ -85,16 +141,22 @@ export class CardContainer extends React.Component {
                     </ImageBackground>
                     {this.state.cardActive ? (
                         <BigCard
-                            prevId = {this.props.cardArray[this.state.activeCardIndex-1]["arenaId"]}
-                            nextId = {this.props.cardArray[this.state.activeCardIndex+1]["arenaId"]}
+                            deckQuantMid = {this.findDeckQuantity(this.state.activeCardIndex)}
+                            deckQuantLeft = {this.findDeckQuantity(prevIndex)}
+                            deckQuantRight = {this.findDeckQuantity(nextIndex)}
 
-                            quantity={this.props.cardArray[this.state.activeCardIndex]["quantity"]}
+                            quantityMid={this.props.cardArray[this.state.activeCardIndex]["quantity"]}
+                            quantityLeft={this.props.cardArray[prevIndex]["quantity"]}
+                            quantityRight={this.props.cardArray[nextIndex]["quantity"]}
+
+                            prevId = {this.props.cardArray[prevIndex]["arenaId"]}
+                            nextId = {this.props.cardArray[nextIndex]["arenaId"]}
                             pressRight={this.handleRight}
                             pressLeft={this.handleLeft}
-                            pressDown={this.handleTouch}
+                            pressDown={this.handleDown}
+                            addCard ={this.props.addCard}
                             arenaId={this.state.activeCardId}
                             index={this.state.activeCardIndex}
-                            addCard ={this.props.addCard}
                         />
                     ) : (
                         <View style={{display:'none'}}></View>
@@ -107,6 +169,7 @@ export class CardContainer extends React.Component {
 
 const styles = StyleSheet.create({
     outerView : {
+        width:'100%',
         flex:1,
         height:10000,
         alignItems: 'center',

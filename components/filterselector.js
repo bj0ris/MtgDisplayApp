@@ -1,30 +1,33 @@
 import React from 'react';
-import { StyleSheet, Text, View,Button, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View,Button, TouchableHighlight, Image } from 'react-native';
 
 export class FilterSelector extends React.Component {
     constructor(props){
         super(props);
-        this.state = {
-            activeBool : true,
-        }
         this.touchHandle = this. touchHandle.bind(this);
 
     }
-
+    //Add Vibration
     touchHandle(){
-        this.props.filterPress(this.props.colorTag)
-        var newActiveBool = this.state.activeBool ? false : true;
-        this.setState({
-            activeBool : newActiveBool
-        });
+        this.props.filterPress(this.props.colorTag);
     }
 
     render() {
-        if(this.state.activeBool){
+        var colorDict = {
+            'W':require('../assets/divImg/W.png'),
+            'U':require('../assets/divImg/U.png'),
+            'B':require('../assets/divImg/B.png'),
+            'R':require('../assets/divImg/R.png'),
+            'G':require('../assets/divImg/G.png'),
+            'N':require('../assets/divImg/N.png'),
+            'allOff':require('../assets/divImg/dim1.png')
+        };
+        var path = colorDict[this.props.colorTag];
+        if(this.props.active){
             return (
                 <TouchableHighlight  onPress={this.touchHandle}>
                     <View style={[styles.filterSelected,{backgroundColor:this.props.color}]}>
-
+                        <Image source={path} resizeMode='contain' style={styles.image}/>
                     </View>
                 </TouchableHighlight>
             );
@@ -32,8 +35,8 @@ export class FilterSelector extends React.Component {
         else{
             return (
                 <TouchableHighlight  onPress={this.touchHandle}>
-                    <View style={[styles.filterNotSelected,{backgroundColor:this.props.color}]}>
-
+                    <View style={[styles.filterNotSelected]}>
+                        <Image source={path} resizeMode='contain' style={styles.image}/>
                     </View>
                 </TouchableHighlight>
             );
@@ -41,20 +44,21 @@ export class FilterSelector extends React.Component {
     }
 
 }
+//{backgroundColor:this.props.color}
 const styles = StyleSheet.create({
 
     filterSelected:{
         width: 30,
         height: 30,
-        borderWidth:3,
-        borderColor:'orange',
-        borderRadius:40,
+        borderRadius:30,
     },
     filterNotSelected:{
         width: 30,
         height: 30,
-        borderWidth:1,
-        borderColor:'black',
-        borderRadius:40,
+        borderRadius:30,
+        opacity:0.3,
+    },
+    image :{
+        borderRadius:30
     }
 });

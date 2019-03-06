@@ -1,19 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, View,Button, Animated, PanResponder,Easing } from 'react-native';
-import {FilterBox} from './filterbox.js'
+import { StyleSheet, Text, View,Button, Animated, PanResponder,Easing ,TouchableHighlight,ImageBackground} from 'react-native';
+import {FilterBox} from './filterbox.js';
+import {DeckBalance} from './deckBalance.js';
 
 
 export class Header extends React.Component {
     constructor(props){
         super(props);
-        this.extendRetract = this.extendRetract.bind(this);
 
         const position = new Animated.ValueXY();
         const panResponder = PanResponder.create({
                 onStartShouldSetPanResponder: () => true,
                 onPanResponderMove: (event, gesture) => {
-                    if(this.state.extendedBool){
-                        position.setValue({ x: 0, y: gesture.dy+gesture.y0 });
+                    if(!this.state.renderHeaderCont){
+                        this.setState({
+                            renderHeaderCont:true,
+                        });
+                    }
+                    if(this.state.extendedBool ){
+                        position.setValue({ x: 0, y: 400+gesture.dy });
                     }
                     else{
                         position.setValue({ x: 0, y: gesture.dy });
@@ -28,7 +33,12 @@ export class Header extends React.Component {
                                 easing: Easing.linear,
                             }).start();
                             //position.setValue({x:0,y:0});
-                            this.setState({extendedBool:false});
+                            setTimeout(() => {
+                                this.setState({
+                                    extendedBool:false,
+                                    renderHeaderCont:false,
+                                });
+                            },200);
                         }
                         else{
                             position.setValue({x:0,y:400});
@@ -54,15 +64,15 @@ export class Header extends React.Component {
         this.state = {
             position,
             panResponder,
-            extendedBool:false
+            extendedBool:false,
+            renderHeaderCont:false,
         };
     }
-
-    extendRetract(){
-        var newExtendedBool = this.state.headerExtended ? false :true;
-        this.setState({
-            headerExtended :newExtendedBool
-        });
+    shouldComponentUpdate(nextProps,nextState){
+        return true;
+    }
+    componentDidUpdate(){
+        console.log("Header Update")
     }
 
     render() {
@@ -75,25 +85,43 @@ export class Header extends React.Component {
             inputRange:[0,300],
             outputRange:[-300,0],
             extrapolate:'clamp'
-        })
+        });
+        if(this.state.renderHeaderCont){
+            return (
+                    <Animated.View style={[styles.outerHeader,{height: headerHight } ]}
+                        {...this.state.panResponder.panHandlers}
+                        >
+                        <ImageBackground source={require('../assets/divImg/texture2.png')} style={{width:'100%',height:'100%'}} >
+                        <Animated.View style={[styles.headerContentContainer,{top:headerContentTop}]}>
+                            <View style={styles.topContent}>
+                                <TouchableHighlight onPress={this.props.selectLib}>
+                                    <FilterBox filterPress={this.props.filterPress} activeCards={this.props.activeCards} />
+                                </ TouchableHighlight>
+                            </View>
+                            <View style={styles.dividerLine} />
+                                <View style={styles.bottomContent}>
+                                    <TouchableHighlight onPress={this.props.selectDeck}>
+                                        <DeckBalance deckBuild={this.props.deckBuild}/>
+                                    </TouchableHighlight>
+                                    <View style={{width:100,height:50,backgroundColor:'steelblue'}} />
+                                </View>
+                        </Animated.View>
+                        </ImageBackground>
+                    </Animated.View>
+            );
+        }
+        else{
+            return(
 
-        return (
-            <Animated.View style={[styles.outerHeader,{height: headerHight } ]}
-                {...this.state.panResponder.panHandlers}
-                >
-                <Animated.View style={[styles.headerContentContainer,{top:headerContentTop}]}>
-                    <View style={styles.topContent}>
-                        <FilterBox filterPress={this.props.filterPress} />
-                    </View>
-                    <View style={styles.dividerLine} />
-                    <View style={styles.bottomContent}>
-                        <View style={{width:200,height:100,backgroundColor:'green'}} />
-                        <View style={{width:100,height:50,backgroundColor:'steelblue'}} />
-                    </View>
+                <Animated.View style={[styles.outerHeader,{height: headerHight } ]}
+                    {...this.state.panResponder.panHandlers}
+                    >
+                    <ImageBackground source={require('../assets/divImg/texture2.png')} style={{width:'100%',height:'100%'}} >
+                        <Text style={{marginTop:20,alignSelf:'center',color:'white',fontSize:40}}>Library Active</Text>
+                    </ImageBackground>
                 </Animated.View>
-            </Animated.View>
-        );
-
+            );
+        }
     }
 }
 const styles = StyleSheet.create({

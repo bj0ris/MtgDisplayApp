@@ -12,12 +12,12 @@ export class FilterBox extends React.Component {
                     <FilterSelector colorTag = {'allOff'} color={'steelblue'} filterPress= {this.props.filterPress}/>
                 </View>
                 <View style={styles.smallFilterContainer}>
-                    <FilterSelector colorTag = {'W'} color={'white'} filterPress= {this.props.filterPress}/>
-                    <FilterSelector colorTag = {'U'} color={'blue'} filterPress= {this.props.filterPress}/>
-                    <FilterSelector colorTag = {'B'} color={'black'} filterPress= {this.props.filterPress}/>
-                    <FilterSelector colorTag = {'R'} color={'red'} filterPress= {this.props.filterPress}/>
-                    <FilterSelector colorTag = {'G'} color={'green'} filterPress= {this.props.filterPress}/>
-                    <FilterSelector colorTag = {'N'} color={'yellow'} filterPress= {this.props.filterPress}/>
+                    <FilterSelector colorTag = {'W'} active={this.props.activeCards.includes('W')} color={'white'} filterPress= {this.props.filterPress}/>
+                    <FilterSelector colorTag = {'U'} active={this.props.activeCards.includes('U')} color={'blue'} filterPress= {this.props.filterPress}/>
+                    <FilterSelector colorTag = {'B'} active={this.props.activeCards.includes('B')} color={'black'} filterPress= {this.props.filterPress}/>
+                    <FilterSelector colorTag = {'R'} active={this.props.activeCards.includes('R')} color={'red'} filterPress= {this.props.filterPress}/>
+                    <FilterSelector colorTag = {'G'} active={this.props.activeCards.includes('G')} color={'green'} filterPress= {this.props.filterPress}/>
+                    <FilterSelector colorTag = {'N'} active={this.props.activeCards.includes('N')} color={'yellow'} filterPress= {this.props.filterPress}/>
                 </View>
             </View>
         );
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     smallFilterContainer: {
-        flex:2,
+        flex:1,
         width:'100%',
         flexDirection:'row',
         alignItems:'center',

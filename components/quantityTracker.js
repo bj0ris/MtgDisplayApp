@@ -4,19 +4,38 @@ import { StyleSheet, Text, View, Image, Alert, TouchableHighlight } from 'react-
 export class QuantityTracker extends React.Component {
     constructor(props){
         super(props);
+        this.findStyle = this.findStyle.bind(this);
 
+    }
+    componentWillReceiveProps(nextProps){
+    }
+
+    findStyle(num){
+        var deckQuant = this.props.deckQuant;
+        var libQuant = this.props.quantity;
+
+        if(libQuant>=num){
+            if( Math.abs(libQuant-deckQuant) <= num-1){
+                return styles.inDeckDiamond;
+            }
+            else if(libQuant>=num){
+                return styles.ownedDiamond;
+            }
+        }
+        else{
+            return styles.basicDiamond
+        }
     }
 
 
-
-
     render(){
+
         return(
             <View style={styles.container}>
-                <View style={[this.props.quantity>= 1 ? styles.ownedDiamond  : styles.basicDiamond,{transform: [{rotateZ: '45deg' }] }]} />
-                <View style={[this.props.quantity>= 2 ? styles.ownedDiamond  : styles.basicDiamond,{transform: [{rotateZ: '45deg' }] }]} />
-                <View style={[this.props.quantity>= 3 ? styles.ownedDiamond  : styles.basicDiamond,{transform: [{rotateZ: '45deg' }] }]} />
-                <View style={[this.props.quantity>= 4 ? styles.ownedDiamond  : styles.basicDiamond,{transform: [{rotateZ: '45deg' }] }]} />
+                <View style={[this.findStyle(1),{transform: [{rotateZ: '45deg' }] }]} />
+                <View style={[this.findStyle(2),{transform: [{rotateZ: '45deg' }] }]} />
+                <View style={[this.findStyle(3),{transform: [{rotateZ: '45deg' }] }]} />
+                <View style={[this.findStyle(4),{transform: [{rotateZ: '45deg' }] }]} />
             </View>
         );
     }
@@ -32,7 +51,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'yellow',
         backgroundColor:'grey',
-        opacity:0.5
+
+        position:'absolute',
+        top:0,
     },
     basicDiamond:{
         width:'10%',
@@ -45,15 +66,15 @@ const styles = StyleSheet.create({
     ownedDiamond:{
         width:'10%',
         aspectRatio: 1,
-        backgroundColor:'orange',
-        borderWidth:1,
+        borderWidth:2,
+        backgroundColor:'yellow',
         borderColor:'orange',
     },
     inDeckDiamond:{
         width:'10%',
         aspectRatio: 1,
         backgroundColor:'black',
-        borderWidth:1,
-        borderColor:'black',
+        borderWidth:3,
+        borderColor:'red',
     }
 });

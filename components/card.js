@@ -19,7 +19,8 @@ export class Card extends React.Component {
     }
 
     shouldComponentUpdate (nextProps, nextState){
-        if((nextState.activeCard != this.state.activeCard) )  {
+        //If this card is activated OR
+        if((nextState.activeCard != this.state.activeCard) || (this.props.deckQuant != nextProps.deckQuant) )  {
             return true;
         }
         else{
@@ -31,7 +32,6 @@ export class Card extends React.Component {
         this.setState({
             activeCard:activeBool
         });
-
         }
 
     cardPressed(){
@@ -46,24 +46,31 @@ export class Card extends React.Component {
         //console.log(this.props.index);
         //
 
-        const reqDim = [null, require('../assets/divImg/dim1.png'),require('../assets/divImg/dim2.png'),require('../assets/divImg/dim3.png'),require('../assets/divImg/dim4.png')]
+        const reqDim = [[null],
+                        [require('../assets/divImg/dim1.png'),require('../assets/divImg/dim11.png')],
+                        [require('../assets/divImg/dim2.png'),require('../assets/divImg/dim21.png'),require('../assets/divImg/dim22.png')],
+                        [require('../assets/divImg/dim3.png'),require('../assets/divImg/dim31.png'),require('../assets/divImg/dim32.png'),require('../assets/divImg/dim33.png')],
+                        [require('../assets/divImg/dim4.png'),require('../assets/divImg/dim41.png'),require('../assets/divImg/dim42.png'),require('../assets/divImg/dim43.png'),require('../assets/divImg/dim44.png')]
+                    ];
+
         var path = Images.s[this.props.arenaId];
+        var counterPath = reqDim[this.props.quantity][this.props.deckQuant];
+
             if(this.state.activeCard){
                 return (
                     <TouchableHighlight onPress={this.cardPressed}>
                         <View style={styles.cardActive} >
-                            <Image source={reqDim[this.props.quantity]} />
+                            <Image source={counterPath} />
                             <Image source={path}  style={styles.image} />
                         </View>
                     </TouchableHighlight>
                 );
             }
-            //
             else{
                 return (
                     <TouchableHighlight onPress={this.cardPressed}>
                         <View style={styles.card} >
-                            <Image source={reqDim[this.props.quantity]}/>
+                            <Image source={counterPath}/>
                             <Image source={path}  style={styles.image} />
                         </View>
                     </TouchableHighlight>
@@ -72,15 +79,8 @@ export class Card extends React.Component {
         }
 
 }
-//this.props.smlImggfhjnjklb
-//source={require('../assets/img/65971s.jpg')}
-//<Text onPress={this.testfunc}>{this.props.text}</Text>
-//Somethingfgh
 
 
-/*
-
-*/
 const styles = StyleSheet.create({
     card: {
         width: 73,
