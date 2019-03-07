@@ -83,16 +83,16 @@ export class Card extends React.Component {
 
 const styles = StyleSheet.create({
     card: {
-        width: 73,
-        height:122,
+        width: 77,
+        height:126,
         margin: 15,
         marginBottom:0,
         borderWidth: 2,
         borderColor: '#000',
     },
     cardActive: {
-        width: 73,
-        height:122,
+        width: 77,
+        height:126,
         margin: 15,
         marginBottom:0,
         borderWidth: 2,

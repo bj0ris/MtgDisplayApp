@@ -13,7 +13,7 @@ export class DeckBar extends React.Component {
     }
 
     componentDidUpdate(){
-        console.log("Bar    Update");
+        //console.log("Bar    Update");
     }
 
     calculateCreaturePercentage(){

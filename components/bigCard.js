@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, TouchableHighlight, Animated , PanResponder,Dimensions,Easing } from 'react-native';
+import { StyleSheet, View, Image, TouchableHighlight, Animated , PanResponder,Dimensions,Easing,BackHandler,ActivityIndicator } from 'react-native';
 import Images from '../assets/imgIndex.js';
 import {QuantityTracker} from './quantityTracker.js';
 
@@ -81,82 +81,16 @@ export class BigCard extends React.Component {
 
                     //Close card
                     else if (gesture.dy>100) {
-                        var screenHeight = Dimensions.get('window').height;
-                        Animated.parallel([
-                            Animated.timing(this.state.scale, {
-                                toValue: 0,
-                                duration: 300,
-                                easing: Easing.linear,
-                            }),
-                            Animated.timing(positionMiddle,{
-                                toValue: {x:0, y:screenHeight},
-                                duration: 300,
-                                easing: Easing.linear,
-                            }),
-                            Animated.timing(opacity,{
-                                toValue:0,
-                                duration:0
-                            })
-                        ]).start();
-                        setTimeout(() => {this.props.pressDown(null,this.props.index)}, 300);
+                        this.closeCard();
                     }
 
                     //Add card
                     else if(gesture.dy<-100){
-                        var screenHeight = Dimensions.get('window').height;
-                        var addSucessBool = this.props.addCard(this.props.index);
-                        console.log(addSucessBool);
-                        if(addSucessBool){
-                            this.setState({
-                                deckQuantMid: this.state.deckQuantMid +1
-                            })
-                            Animated.sequence([
-                                Animated.parallel([
-                                    Animated.timing(opacity,{
-                                        toValue:0,
-                                        duration:0,
-                                    }),
-                                    Animated.timing(positionMiddle,{
-                                        toValue: {x:0, y:-2000},
-                                        duration: 500,
-                                        easing: Easing.linear,
-                                    }),
-                                    Animated.timing(this.state.scale,{
-                                        toValue: 0,
-                                        duration: 500,
-                                        easing: Easing.linear,
-                                    }),
-                                ]),
-                                Animated.timing(positionMiddle,{
-                                    toValue: {x:0, y:0},
-                                    duration: 0,
-                                    easing: Easing.linear,
-                                }),
-                                Animated.timing(opacity,{
-                                    toValue: 1,
-                                    duration: 0,
-                                    easing: Easing.linear,
-                                }),
-
-                                Animated.timing(scale,{
-                                    toValue: 1,
-                                    duration: 0,
-                                    easing: Easing.linear,
-                                }),
-                            ]).start();
+                        if(this.props.libActive){
+                            this.addCard();
                         }
                         else{
-                            Animated.sequence([
-                                Animated.timing(positionMiddle,{
-                                    toValue: {x:0, y:0},
-                                    duration: 50,
-                                    easing: Easing.linear,
-                                }),
-                                Animated.spring(positionMiddle,{
-                                    toValue: {x:100, y:0},
-                                    duration:500,
-                                }),
-                            ]).start();
+                            this.removeCard();
                         }
                     }
 
@@ -174,6 +108,10 @@ export class BigCard extends React.Component {
             panResponder, position, positionMiddle, scale, opacity,
             deckQuantMid: 0
         };
+        this.handleBackPress = this.handleBackPress.bind(this);
+        this.closeCard = this.closeCard.bind(this);
+        this.addCard = this.addCard.bind(this);
+        this.removeCard = this.removeCard.bind(this);
     }
     shouldComponentUpdate(nextProps,nextState){
         return true
@@ -186,7 +124,111 @@ export class BigCard extends React.Component {
             deckQuantMid:nextProps.deckQuantMid
         })
     }
+    componentDidMount() {
+        this.setState({
+            deckQuantMid:this.props.deckQuantMid
+        })
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
 
+    handleBackPress(){
+        this.closeCard();
+        return true;
+    }
+
+    closeCard(){
+        var screenHeight = Dimensions.get('window').height;
+        Animated.parallel([
+            Animated.timing(this.state.scale, {
+                toValue: 0,
+                duration: 300,
+                easing: Easing.linear,
+            }),
+            Animated.timing(this.state.positionMiddle,{
+                toValue: {x:0, y:screenHeight},
+                duration: 300,
+                easing: Easing.linear,
+            }),
+            Animated.timing(this.state.opacity,{
+                toValue:0,
+                duration:0
+            })
+        ]).start();
+        setTimeout(() => {this.props.pressDown(null,this.props.index)}, 300);
+    }
+    upCardAnimationSucess(){
+        var screenHeight = Dimensions.get('window').height;
+        Animated.sequence([
+            Animated.parallel([
+                Animated.timing(this.state.opacity,{
+                    toValue:0,
+                    duration:0,
+                }),
+                Animated.timing(this.state.positionMiddle,{
+                    toValue: {x:0, y:-2*screenHeight},
+                    duration: 300,
+                    easing: Easing.linear,
+                }),
+                Animated.timing(this.state.scale,{
+                    toValue: 0,
+                    duration: 400,
+                    easing: Easing.linear,
+                }),
+            ]),
+            Animated.timing(this.state.positionMiddle,{
+                toValue: {x:0, y:0},
+                duration: 0,
+                easing: Easing.linear,
+            }),
+            Animated.timing(this.state.opacity,{
+                toValue: 1,
+                duration: 0,
+                easing: Easing.linear,
+            }),
+
+            Animated.timing(this.state.scale,{
+                toValue: 1,
+                duration: 0,
+                easing: Easing.linear,
+            }),
+        ]).start();
+    }
+    upCardAnimationFail(){
+        Animated.sequence([
+            Animated.timing(this.state.positionMiddle,{
+                toValue: {x:0, y:0},
+                duration: 50,
+                easing: Easing.linear,
+            }),
+        ]).start();
+    }
+    addCard(){
+        var addSucessBool = this.props.addCard(this.props.index);
+        if(addSucessBool){
+            this.setState({
+                deckQuantMid: this.state.deckQuantMid +1
+            })
+            this.upCardAnimationSucess();
+        }
+        else{
+            this.upCardAnimationFail();
+        }
+    }
+    removeCard(){
+        var addSucessBool = this.props.removeCard(this.props.index);
+        if(addSucessBool){
+            this.setState({
+                deckQuantMid: this.state.deckQuantMid -1
+            })
+            this.upCardAnimationSucess();
+        }
+        else{
+            this.upCardAnimationFail();
+        }
+    }
 
     render() {
         var pathLeft = Images.l[this.props.prevId];
@@ -212,7 +254,7 @@ export class BigCard extends React.Component {
                     ]}
                     {...this.state.panResponder.panHandlers}
                     >
-                    <View style={{flexDirection:'row',flex:1,justifyContent: 'space-evenly'}} >
+                    <View style={{flexDirection:'row',flex:1,justifyContent: 'space-evenly',top:50}} >
                         <Animated.View style={[styles.imageContainer,{left:rightLeftPos,opacity:this.state.opacity}]}>
                             <QuantityTracker quantity={this.props.quantityLeft} deckQuant={this.props.deckQuantLeft} />
                             <Image source={pathLeft} style={styles.image}/>
@@ -243,7 +285,6 @@ const styles = StyleSheet.create({
           { scale: 0.55 },
         ],
         borderRadius: 20,
-        borderWidth:2,
         borderColor:'yellow',
     },
     imageContainer: {
@@ -252,19 +293,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
 
         position:'relative',
-        borderWidth:2,
         borderColor:'green',
     },
     outerAnimated :{
         width:'300%',
         height:'70%',
         position:'absolute',
-        marginTop:200,
+        marginTop:250,
         marginLeft:'-140%',
 
 
 
-        borderWidth:2,
         borderColor:'black',
 
         flexDirection:'row',

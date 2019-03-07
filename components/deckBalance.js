@@ -21,7 +21,7 @@ export class DeckBalance extends React.Component {
         this.getDeckComposition = this.getDeckComposition.bind(this);
     }
     componentWillReceiveProps(nextProps){
-        console.log("DB     Recieving Props");
+        //console.log("DB     Recieving Props");
         this.setState({
             HighestNumOfCards: 0,
             oneManaCards : [0,0],
@@ -37,7 +37,7 @@ export class DeckBalance extends React.Component {
         console.log("DB     Update");
     }
     shouldComponentUpdate(nextProps,nextState){
-        console.log("DB     trying update");
+        //console.log("DB     trying update");
         /*
         NEED BETTER OBJECT COMPARE?
         if(this.props.deckBuild == nextProps.deckBuild){
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     container: {
         width:200,
         height:100,
-        backgroundColor:'green',
         flexDirection:'row',
         justifyContent:'space-evenly',
     },

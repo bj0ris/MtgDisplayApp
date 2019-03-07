@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,ActivityIndicator } from 'react-native';
 import {CardContainer} from './components/cardContainer.js';
 import {Header} from './components/header.js';
 import CardData from './assets/cardDB.json';
 import update from 'immutability-helper';
 
-//'W','U','B','R','G','N'
+
 export default class App extends React.Component {
     constructor(props){
         super(props);
@@ -14,10 +14,12 @@ export default class App extends React.Component {
             deckBuild : {},
             libActive: true,
             currentCardArray: [],
+            loadingLibBool:false,
         }
         this.generateCardArray = this.generateCardArray.bind(this);
         this.filterPressed = this.filterPressed.bind(this);
         this.addCard = this.addCard.bind(this);
+        this.removeCard = this.removeCard.bind(this);
         this.generateLibraryArray = this.generateLibraryArray.bind(this);
         this.changeFromDeckToLib = this.changeFromDeckToLib.bind(this);
         this.changeFromLibToDeck = this.changeFromLibToDeck.bind(this);
@@ -31,7 +33,6 @@ export default class App extends React.Component {
     }
 
     generateCardArray(){
-        console.log("Generating Cards!!!!!!!!!!!!!!!");
         if(this.state.libActive){
             this.generateLibraryArray();
         }
@@ -39,40 +40,49 @@ export default class App extends React.Component {
             this.generateDeckArray();
         }
     }
+    //Generates a card array from cardDB.json while taking into account the activeCardColors
     generateLibraryArray(){
-        var cardArray = [];
-        var stateCards = this.state.activeCardColors;
-        for(var card in CardData){
-            var colorArray = CardData[card]['colors'];;
-            if(colorArray[0] == undefined){
-                colorArray = ['N'];
-            }
-
-            var containsBool = false;
-            for(var i=0; i<colorArray.length;i++){
-                if(stateCards.includes(colorArray[i])){
-                    containsBool=true;
-                    break;
-                }
-            }
-
-            if(containsBool) {
-                var pushData = CardData[card];
-                //Inserts arenaId in self
-                pushData["arenaId"] = String(card);
-
-                cardArray.push(pushData);
-            }
-
-        }
         this.setState({
-            currentCardArray:cardArray
+            loadingLibBool:true
         });
+        setTimeout(() => {
+            var cardArray = [];
+            var stateCards = this.state.activeCardColors;
+            for(var card in CardData){
+                var colorArray = CardData[card]['colors'];;
+                if(colorArray[0] == undefined){
+                    colorArray = ['N'];
+                }
+
+                var containsBool = false;
+                for(var i=0; i<colorArray.length;i++){
+                    if(stateCards.includes(colorArray[i])){
+                        containsBool=true;
+                        break;
+                    }
+                }
+
+                if(containsBool) {
+                    var pushData = CardData[card];
+                    //Inserts arenaId in self
+                    pushData["arenaId"] = String(card);
+
+                    cardArray.push(pushData);
+                }
+
+            }
+            this.setState({
+                currentCardArray:cardArray,
+                loadingLibBool:false,
+            });
+
+        }, 0);
+
     }
 
+    //Makes a card array from the deckBuild state object
     generateDeckArray(){
         var cardArray = [];
-        console.log("Building new deck");
         for(card in this.state.deckBuild){
                 var pushData = CardData[card];
                 cardArray.push(pushData);
@@ -81,6 +91,9 @@ export default class App extends React.Component {
             currentCardArray:cardArray
         });
     }
+
+    //Handles when a filter in the header is pressed, changes the activeCard colors state
+    //Triggered in FilterSelector
     //'W','U','B','R','G','N' or 'allOff'
     filterPressed(colorString){
         if(colorString== 'allOff'){
@@ -113,32 +126,20 @@ export default class App extends React.Component {
                 libActive: true
             });
         }
-        this.generateCardArray();
+        this.generateLibraryArray();
     }
+
     changeFromLibToDeck(){
         if(this.state.libActive){
             this.setState({
                 libActive: false
             });
         }
-        this.generateCardArray();
+        this.generateDeckArray();
     }
-    /*"arenaId": "66079",
-[15:00:32]   "colors": Array [
-[15:00:32]     "U",
-[15:00:32]   ],
-[15:00:32]   "converted_mana_cost": 4,
-[15:00:32]   "dateAdded": "2019-01-10",
-[15:00:32]   "lrg_img_link": "img/66079l.jpg",
-[15:00:32]   "mana_cost": "{3}{U}",
-[15:00:32]   "name": "Herald of Secret Streams",
-[15:00:32]   "power": "2",
-[15:00:32]   "quantity": 1,
-[15:00:32]   "rarity": "rare",
-[15:00:32]   "sml_img_link": "img/66079s.jpg",
-[15:00:32]   "toughness": "3",
-[15:00:32]   "type": "Creature — Merfolk Warrior"
-    */
+
+    //Adding a card to the state object "deckBuild"
+    //Triggered in BigCard
     //Using immutability-helper to prevent changing state.deckBuild outside setState
     addCard(cardIndex){
         var currentCardArray = this.state.currentCardArray;
@@ -168,19 +169,56 @@ export default class App extends React.Component {
         }
     }
 
+    removeCard(cardIndex){
+        var currentCardArray = this.state.currentCardArray;
+        var cardObjectToAdd = currentCardArray[cardIndex];
+        var arenaId = cardObjectToAdd["arenaId"];
+
+        if(this.state.deckBuild[arenaId] == 1){
+            var newObject = update(this.state.deckBuild,{
+                $unset: [arenaId]}
+            );
+            this.setState({
+                deckBuild:newObject
+            });
+            return true;
+        }
+        else if(this.state.deckBuild[arenaId] > 1){
+            var newObject = update(this.state.deckBuild,{
+                [arenaId]:{$apply: function(x){return x-1;}}
+            });
+            this.setState({
+                deckBuild:newObject
+            });
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     render() {
+        var loadingComponent = this.state.loadingLibBool ? <ActivityIndicator size="large" color="green" style={{position:'absolute',zIndex:2}}/> : <View style={{display:'none'}} />;
+
         return (
             <View style={styles.container}>
                 <Header
+                    libActive={this.state.libActive}
                     deckBuild={this.state.deckBuild}
                     selectDeck={this.changeFromLibToDeck}
                     selectLib={this.changeFromDeckToLib}
                     filterPress={this.filterPressed}
                     activeCards={this.state.activeCardColors}/>
+
+                {loadingComponent}
+
                 <CardContainer style={{flex:1}}
+                    libActive={this.state.libActive}
                     cardArray={this.state.currentCardArray}
                     deckBuild={this.state.deckBuild}
-                    addCard={this.addCard}/>
+                    addCard={this.addCard}
+                    removeCard={this.removeCard}
+                    />
             </View>
         );
     }

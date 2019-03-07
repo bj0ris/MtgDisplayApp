@@ -7,7 +7,7 @@ export class FilterBox extends React.Component {
 
     render() {
         return (
-            <View style={styles.filterContainer}>
+            <View style={this.props.libActive ? styles.filterContainerActive : styles.filterContainerInactive}>
                 <View>
                     <FilterSelector colorTag = {'allOff'} color={'steelblue'} filterPress= {this.props.filterPress}/>
                 </View>
@@ -26,7 +26,7 @@ export class FilterBox extends React.Component {
 }
 const styles = StyleSheet.create({
 
-    filterContainer:{
+    filterContainerInactive:{
         flex:1,
         flexDirection:'column',
         alignItems:'center',
@@ -34,6 +34,19 @@ const styles = StyleSheet.create({
         width: '80%',
         height: 150,
         borderColor: 'black',
+        borderWidth: 2,
+        borderRadius: 75,
+        marginTop: 20,
+        opacity:0.5
+    },
+    filterContainerActive:{
+        flex:1,
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent: 'space-around',
+        width: '80%',
+        height: 150,
+        borderColor: 'orange',
         borderWidth: 2,
         borderRadius: 75,
         marginTop: 20,

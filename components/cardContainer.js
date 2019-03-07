@@ -5,7 +5,6 @@ import {BigCard} from './bigCard.js';
 
 
 
-////dsafdsgdsgdfh
 export class CardContainer extends React.Component {
     constructor(props){
         super(props);
@@ -79,7 +78,7 @@ export class CardContainer extends React.Component {
 
 
     findDeckQuantity(index){
-        
+
         var arenaId = this.props.cardArray[index]['arenaId'];
         if(this.props.deckBuild[arenaId] == undefined){
             return 0
@@ -132,7 +131,7 @@ export class CardContainer extends React.Component {
 
             return (
                 <View style={styles.outerView}>
-                    <ImageBackground source={require('../assets/divImg/texture1.jpg')} style={{width:'100%',height:'100%'}} >
+                    <ImageBackground source={require('../assets/divImg/texture3.jpg')} style={{width:'100%',height:'100%'}} >
                         <ScrollView scrollEnabled={this.state.cardActive ? false : true}>
                                 <View style={styles.cardContainer}>
                                     {this.createCards()}
@@ -141,6 +140,8 @@ export class CardContainer extends React.Component {
                     </ImageBackground>
                     {this.state.cardActive ? (
                         <BigCard
+                            libActive = {this.props.libActive}
+
                             deckQuantMid = {this.findDeckQuantity(this.state.activeCardIndex)}
                             deckQuantLeft = {this.findDeckQuantity(prevIndex)}
                             deckQuantRight = {this.findDeckQuantity(nextIndex)}
@@ -155,11 +156,12 @@ export class CardContainer extends React.Component {
                             pressLeft={this.handleLeft}
                             pressDown={this.handleDown}
                             addCard ={this.props.addCard}
+                            removeCard={this.props.removeCard}
                             arenaId={this.state.activeCardId}
                             index={this.state.activeCardIndex}
                         />
                     ) : (
-                        <View style={{display:'none'}}></View>
+                        <View style={{display:'none'}} />
                     )}
                 </View>
             );
@@ -182,6 +184,7 @@ const styles = StyleSheet.create({
         flexWrap:'wrap',
         flexDirection: 'row',
         justifyContent: 'space-around',
+
 
         top:100,
         marginBottom:100,
