@@ -29,7 +29,7 @@ export class CardContainer extends React.Component {
         return true;
     }
     componentWillReceiveProps (nextProps){
-        //If We change cardArrray (e.x from library to deck)
+        //If We change cardArrray (e.x from collection to deck)
         if(nextProps.cardArray.length != this.props.cardArray.length)
         this.setState({
             activeCardId : null,
@@ -140,7 +140,7 @@ export class CardContainer extends React.Component {
                     </ImageBackground>
                     {this.state.cardActive ? (
                         <BigCard
-                            libActive = {this.props.libActive}
+                            collectActive = {this.props.collectActive}
 
                             deckQuantMid = {this.findDeckQuantity(this.state.activeCardIndex)}
                             deckQuantLeft = {this.findDeckQuantity(prevIndex)}

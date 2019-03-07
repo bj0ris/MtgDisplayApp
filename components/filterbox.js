@@ -7,7 +7,7 @@ export class FilterBox extends React.Component {
 
     render() {
         return (
-            <View style={this.props.libActive ? styles.filterContainerActive : styles.filterContainerInactive}>
+            <View style={this.props.collectActive ? styles.filterContainerActive : styles.filterContainerInactive}>
                 <View>
                     <FilterSelector colorTag = {'allOff'} color={'steelblue'} filterPress= {this.props.filterPress}/>
                 </View>

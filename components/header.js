@@ -110,7 +110,7 @@ export class Header extends React.Component {
             outputRange:[0,-450],
             extrapolate: 'clamp'
         });
-        var topText = this.props.libActive ? "Viewing Library" : "Viewing Deck";
+        var topText = this.props.collectActive ? "Viewing Collection" : "Viewing Deck";
 
         return (
                 <Animated.View style={[styles.outerHeader,{height: headerHight } ]}
@@ -119,14 +119,14 @@ export class Header extends React.Component {
                     <ImageBackground source={require('../assets/divImg/texture2.png')} style={{width:'100%',height:'100%'}} >
                     <Animated.View style={[styles.headerContentContainer,{top:headerContentTop}]}>
                         <View style={styles.topContent}>
-                            <TouchableHighlight onPress={this.props.selectLib}>
-                                <FilterBox libActive={this.props.libActive} filterPress={this.props.filterPress} activeCards={this.props.activeCards} />
+                            <TouchableHighlight onPress={this.props.selectColl}>
+                                <FilterBox collectActive={this.props.collectActive} filterPress={this.props.filterPress} activeCards={this.props.activeCards} />
                             </ TouchableHighlight>
                         </View>
 
                         <View style={styles.dividerLine} />
 
-                        <View style={this.props.libActive ? styles.bottomContentInactive : styles.bottomContentActive}>
+                        <View style={this.props.collectActive ? styles.bottomContentInactive : styles.bottomContentActive}>
                             <TouchableHighlight onPress={this.props.selectDeck}>
                                 <DeckBox headerExtended={this.state.extendedBool} deckBuild={this.props.deckBuild} />
                             </TouchableHighlight>

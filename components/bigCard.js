@@ -86,7 +86,7 @@ export class BigCard extends React.Component {
 
                     //Add card
                     else if(gesture.dy<-100){
-                        if(this.props.libActive){
+                        if(this.props.collectActive){
                             this.addCard();
                         }
                         else{

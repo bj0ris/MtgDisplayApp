@@ -12,38 +12,38 @@ export default class App extends React.Component {
         this.state = {
             activeCardColors : ['W','U','B','R','G','N'],
             deckBuild : {},
-            libActive: true,
+            collectActive: true,
             currentCardArray: [],
-            loadingLibBool:false,
+            loadingCollBool:false,
         }
         this.generateCardArray = this.generateCardArray.bind(this);
         this.filterPressed = this.filterPressed.bind(this);
         this.addCard = this.addCard.bind(this);
         this.removeCard = this.removeCard.bind(this);
-        this.generateLibraryArray = this.generateLibraryArray.bind(this);
-        this.changeFromDeckToLib = this.changeFromDeckToLib.bind(this);
-        this.changeFromLibToDeck = this.changeFromLibToDeck.bind(this);
+        this.generateCollectionArray = this.generateCollectionArray.bind(this);
+        this.changeFromDeckToColl = this.changeFromDeckToColl.bind(this);
+        this.changeFromCollToDeck = this.changeFromCollToDeck.bind(this);
     }
 
     componentDidUpdate(){
         console.log("App Update");
     }
     componentDidMount(){
-        this.generateLibraryArray();
+        this.generateCollectionArray();
     }
 
     generateCardArray(){
-        if(this.state.libActive){
-            this.generateLibraryArray();
+        if(this.state.collectActive){
+            this.generateCollectionArray();
         }
         else{
             this.generateDeckArray();
         }
     }
     //Generates a card array from cardDB.json while taking into account the activeCardColors
-    generateLibraryArray(){
+    generateCollectionArray(){
         this.setState({
-            loadingLibBool:true
+            loadingCollBool:true
         });
         setTimeout(() => {
             var cardArray = [];
@@ -73,7 +73,7 @@ export default class App extends React.Component {
             }
             this.setState({
                 currentCardArray:cardArray,
-                loadingLibBool:false,
+                loadingCollBool:false,
             });
 
         }, 0);
@@ -120,19 +120,19 @@ export default class App extends React.Component {
         this.generateCardArray();
     }
 
-    changeFromDeckToLib(){
-        if(!this.state.libActive){
+    changeFromDeckToColl(){
+        if(!this.state.collectActive){
             this.setState({
-                libActive: true
+                collectActive: true
             });
         }
-        this.generateLibraryArray();
+        this.generateCollectionArray();
     }
 
-    changeFromLibToDeck(){
-        if(this.state.libActive){
+    changeFromCollToDeck(){
+        if(this.state.collectActive){
             this.setState({
-                libActive: false
+                collectActive: false
             });
         }
         this.generateDeckArray();
@@ -198,22 +198,22 @@ export default class App extends React.Component {
     }
 
     render() {
-        var loadingComponent = this.state.loadingLibBool ? <ActivityIndicator size="large" color="green" style={{position:'absolute',zIndex:2}}/> : <View style={{display:'none'}} />;
+        var loadingComponent = this.state.loadingCollBool ? <ActivityIndicator size="large" color="green" style={{position:'absolute',zIndex:2}}/> : <View style={{display:'none'}} />;
 
         return (
             <View style={styles.container}>
                 <Header
-                    libActive={this.state.libActive}
+                    collectActive={this.state.collectActive}
                     deckBuild={this.state.deckBuild}
-                    selectDeck={this.changeFromLibToDeck}
-                    selectLib={this.changeFromDeckToLib}
+                    selectDeck={this.changeFromCollToDeck}
+                    selectColl={this.changeFromDeckToColl}
                     filterPress={this.filterPressed}
                     activeCards={this.state.activeCardColors}/>
 
                 {loadingComponent}
 
                 <CardContainer style={{flex:1}}
-                    libActive={this.state.libActive}
+                    collectActive={this.state.collectActive}
                     cardArray={this.state.currentCardArray}
                     deckBuild={this.state.deckBuild}
                     addCard={this.addCard}

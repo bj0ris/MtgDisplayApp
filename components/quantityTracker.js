@@ -12,13 +12,13 @@ export class QuantityTracker extends React.Component {
 
     findStyle(num){
         var deckQuant = this.props.deckQuant;
-        var libQuant = this.props.quantity;
+        var collQuant = this.props.quantity;
 
-        if(libQuant>=num){
-            if( Math.abs(libQuant-deckQuant) <= num-1){
+        if(collQuant>=num){
+            if( Math.abs(collQuant-deckQuant) <= num-1){
                 return styles.inDeckDiamond;
             }
-            else if(libQuant>=num){
+            else if(collQuant>=num){
                 return styles.ownedDiamond;
             }
         }
