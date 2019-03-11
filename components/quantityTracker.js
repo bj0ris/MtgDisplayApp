@@ -7,8 +7,7 @@ export class QuantityTracker extends React.Component {
         this.findStyle = this.findStyle.bind(this);
 
     }
-    componentWillReceiveProps(nextProps){
-    }
+    
 
     findStyle(num){
         var deckQuant = this.props.deckQuant;

@@ -4,13 +4,16 @@ import {FilterSelector} from './filterselector.js'
 
 export class FilterBox extends React.Component {
 
-
+/*
+Removing the "all cards off" selector
+<View>
+    <FilterSelector colorTag = {'allOff'} color={'steelblue'} filterPress= {this.props.filterPress}/>
+</View>
+*/
     render() {
         return (
             <View style={this.props.collectActive ? styles.filterContainerActive : styles.filterContainerInactive}>
-                <View>
-                    <FilterSelector colorTag = {'allOff'} color={'steelblue'} filterPress= {this.props.filterPress}/>
-                </View>
+
                 <View style={styles.smallFilterContainer}>
                     <FilterSelector colorTag = {'W'} active={this.props.activeCards.includes('W')} color={'white'} filterPress= {this.props.filterPress}/>
                     <FilterSelector colorTag = {'U'} active={this.props.activeCards.includes('U')} color={'blue'} filterPress= {this.props.filterPress}/>

@@ -19,7 +19,7 @@ export class Card extends React.Component {
     }
 
     shouldComponentUpdate (nextProps, nextState){
-        //If this card is activated OR
+        //If this card is activated OR change of quantity added to deck
         if((nextState.activeCard != this.state.activeCard) || (this.props.deckQuant != nextProps.deckQuant) )  {
             return true;
         }
@@ -42,10 +42,6 @@ export class Card extends React.Component {
     }
 
     render() {
-        // test = Images.s.s68286;
-        //console.log(this.props.index);
-        //
-
         const reqDim = [[null],
                         [require('../assets/divImg/dim1.png'),require('../assets/divImg/dim11.png')],
                         [require('../assets/divImg/dim2.png'),require('../assets/divImg/dim21.png'),require('../assets/divImg/dim22.png')],

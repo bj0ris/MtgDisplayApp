@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View,Button, Animated, PanResponder,Easing ,TouchableHighlight,ImageBackground,BackHandler} from 'react-native';
+import { StyleSheet, Text, View, Image, Button, Animated, PanResponder,Easing ,TouchableHighlight,ImageBackground,BackHandler} from 'react-native';
 import {FilterBox} from './filterbox.js';
-import {DeckBox} from './deckBox.js'
+import {DeckBox} from './deckBox.js';
+import { Icon } from 'react-native-elements';
 
 
 export class Header extends React.Component {
@@ -28,7 +29,6 @@ export class Header extends React.Component {
                                 duration: 200,
                                 easing: Easing.linear,
                             }).start();
-                            //position.setValue({x:0,y:0});
                             setTimeout(() => {
                                 this.setState({
                                     extendedBool:false,
@@ -36,6 +36,7 @@ export class Header extends React.Component {
                             },200);
                         }
                         else{
+                            //Retract header
                             position.setValue({x:0,y:400});
                             this.setState({extendedBool:true});
                         }
@@ -87,7 +88,6 @@ export class Header extends React.Component {
             duration: 200,
             easing: Easing.linear,
         }).start();
-        //position.setValue({x:0,y:0});
         setTimeout(() => {
             this.setState({
                 extendedBool:false,
@@ -110,7 +110,7 @@ export class Header extends React.Component {
             outputRange:[0,-450],
             extrapolate: 'clamp'
         });
-        var topText = this.props.collectActive ? "Viewing Collection" : "Viewing Deck";
+        var topText = this.props.collectActive ? "Collection" : "Deck";
 
         return (
                 <Animated.View style={[styles.outerHeader,{height: headerHight } ]}
@@ -133,9 +133,10 @@ export class Header extends React.Component {
                         </View>
                     </Animated.View>
                     <Animated.Text style={[{alignSelf:'center',color:'white',fontSize:40},{top:textHight}]}>{topText}</Animated.Text>
+                    <Icon name={this.state.extendedBool ? 'arrow-drop-up' : 'arrow-drop-down'} color='#fff'/>
                     </ImageBackground>
                 </Animated.View>
-        );
+        );//arrow-down-drop-circle
 
     }
 }
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     },
     bottomContentActive:{
         flex:1,
-        width:'100%',
+        width:'80%',
         flexDirection:'row',
         justifyContent: 'space-evenly',
         alignItems:'center',
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     },
     bottomContentInactive:{
         flex:1,
-        width:'100%',
+        width:'80%',
         flexDirection:'row',
         justifyContent: 'space-evenly',
         alignItems:'center',

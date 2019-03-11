@@ -3,6 +3,9 @@ import { StyleSheet, Text, View,Button ,TouchableHighlight} from 'react-native';
 import {DeckBar} from './deckBar.js';
 import CardData from '../assets/cardDB.json';
 
+
+//BUG: Consider land cards
+
 export class DeckBalance extends React.Component {
     constructor(props){
         super(props);
@@ -56,7 +59,7 @@ export class DeckBalance extends React.Component {
         }
         return cardArray
     }
-
+    //Change to includes creature, use regex for the C
     isTypeCreature(cardObject){
         var typeString = cardObject["type"];
         if(typeString.substring(0,8) == "Creature"){
@@ -73,7 +76,7 @@ export class DeckBalance extends React.Component {
         return cardObject["converted_mana_cost"];
     }
 
-    //Create a two dimentional array for each mana cost. 2nd dim is [CreatureAmount,amountTotal]
+    //Create an array for each mana cost. [CreatureAmount,amountTotal]
     getDeckComposition(cardArray){
         var oneManaCards = [0,0]
         var twoManaCards = [0,0]

@@ -104,7 +104,7 @@ export class CardContainer extends React.Component {
         }
     }
 
-    //fjdkslafjfkdsla
+
     createCards(){
         var that = this;
         var cardJSXArray = this.props.cardArray.map(function(data,index) {
@@ -120,10 +120,10 @@ export class CardContainer extends React.Component {
                             press={that.handleTouch}
                             key={data["arenaId"]} />
         });
-
         return cardJSXArray;
+
     }
-    //divImg/texture1.jpg
+
     render() {
         var nextIndex = this.findNextIndex(this.state.activeCardIndex);
         var prevIndex = this.findPrevIndex(this.state.activeCardIndex);
@@ -173,7 +173,6 @@ const styles = StyleSheet.create({
     outerView : {
         width:'100%',
         flex:1,
-        height:10000,
         alignItems: 'center',
 
         justifyContent: 'center',

@@ -301,11 +301,6 @@ const styles = StyleSheet.create({
         position:'absolute',
         marginTop:250,
         marginLeft:'-140%',
-
-
-
-        borderColor:'black',
-
         flexDirection:'row',
     }
 });

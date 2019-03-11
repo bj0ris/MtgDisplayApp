@@ -25,7 +25,7 @@ export class CardCounter extends React.Component {
 const styles = StyleSheet.create({
 
     cardCounter: {
-        width:100,
+        width:50,
         height:50,
         alignItems:'center',
         justifyContent:'center'

@@ -7,7 +7,7 @@ export class FilterSelector extends React.Component {
         this.touchHandle = this. touchHandle.bind(this);
 
     }
-    //Add Vibration
+    //Add Vibration ?
     touchHandle(){
         this.props.filterPress(this.props.colorTag);
     }

@@ -17,7 +17,8 @@ export class DeckBox extends React.Component {
 }
 const styles = StyleSheet.create({
     container:{
+        width:'80%',
         flexDirection:'row',
-        alignItems:'center'
+        alignItems:'center',
     }
 });

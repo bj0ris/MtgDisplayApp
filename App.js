@@ -48,8 +48,8 @@ export default class App extends React.Component {
         setTimeout(() => {
             var cardArray = [];
             var stateCards = this.state.activeCardColors;
-            for(var card in CardData){
-                var colorArray = CardData[card]['colors'];;
+            for(card in CardData){
+                var colorArray = CardData[card]['colors'];
                 if(colorArray[0] == undefined){
                     colorArray = ['N'];
                 }
@@ -96,28 +96,21 @@ export default class App extends React.Component {
     //Triggered in FilterSelector
     //'W','U','B','R','G','N' or 'allOff'
     filterPressed(colorString){
-        if(colorString== 'allOff'){
-            this.setState({
-                activeCardColors:[]
-            });
+        var oldColorArray = this.state.activeCardColors.slice(0);
+        if(oldColorArray.includes(colorString)){
+            var index = oldColorArray.indexOf(colorString);
+            oldColorArray.splice(index, 1);
         }
         else{
-            var oldColorArray = this.state.activeCardColors;
-            if(oldColorArray.includes(colorString)){
-                var index = oldColorArray.indexOf(colorString);
-                oldColorArray.splice(index, 1);
-                this.setState({
-                    activeCardColors:oldColorArray
-                });
-            }
-            else{
-                oldColorArray.push(colorString);
-                this.setState({
-                    activeCardColors:oldColorArray
-                });
-            }
+            oldColorArray.push(colorString);
+
         }
-        this.generateCardArray();
+        this.setState({
+            activeCardColors:oldColorArray,
+            collectActive:true
+        });
+
+        this.generateCollectionArray();
     }
 
     changeFromDeckToColl(){
